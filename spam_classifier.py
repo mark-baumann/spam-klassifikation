@@ -13,6 +13,7 @@ Dataset: SMS Spam Collection (UCI)
 
 import os
 import shutil
+import time
 import zipfile
 from urllib.request import urlopen
 
@@ -184,7 +185,6 @@ def main():
     results = []
     for name, model in models:
         print(f"   {name}...")
-        import time
         t0 = time.time()
         res = evaluate_model(name, model, X_train, X_test, y_train, y_test)
         train_time = time.time() - t0
