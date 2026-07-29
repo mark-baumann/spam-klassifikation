@@ -21,9 +21,10 @@ from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
     confusion_matrix, classification_report
 )
-from urllib import request
+from urllib.request import urlopen
 import os
 import zipfile
+import shutil
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -41,7 +42,9 @@ def load_spam_data():
     if not os.path.exists(extract_path):
         url = "https://archive.ics.uci.edu/static/public/228/sms+spam+collection.zip"
         print("  Lade SMS Spam Collection...")
-        request.urlretrieve(url, zip_path)
+        with urlopen(url) as response:
+            with open(zip_path, "wb") as f:
+                shutil.copyfileobj(response, f)
         with zipfile.ZipFile(zip_path, "r") as zf:
             zf.extractall(extract_path)
 
