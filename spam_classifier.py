@@ -11,21 +11,23 @@ Ansätze:
 Dataset: SMS Spam Collection (UCI)
 """
 
+import os
+import shutil
+import zipfile
+from urllib.request import urlopen
+
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
-    accuracy_score, precision_score, recall_score, f1_score,
-    confusion_matrix, classification_report
+    accuracy_score,
+    f1_score,
+    precision_score,
+    recall_score,
 )
-from urllib.request import urlopen
-import os
-import zipfile
-import shutil
-
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
 
 # ═══════════════════════════════════════════════════════════════
 # Daten laden
@@ -42,15 +44,14 @@ def load_spam_data():
     if not os.path.exists(extract_path):
         url = "https://archive.ics.uci.edu/static/public/228/sms+spam+collection.zip"
         print("  Lade SMS Spam Collection...")
-        with urlopen(url) as response:
-            with open(zip_path, "wb") as f:
-                shutil.copyfileobj(response, f)
+        with urlopen(url) as response, open(zip_path, "wb") as f:
+            shutil.copyfileobj(response, f)
         with zipfile.ZipFile(zip_path, "r") as zf:
             zf.extractall(extract_path)
 
     # Datei finden
     for f in os.listdir(extract_path):
-        if f.endswith(".csv") or f.endswith(".txt") or "SMSSpamCollection" in f:
+        if f.endswith((".csv", ".txt")) or "SMSSpamCollection" in f:
             path = os.path.join(extract_path, f)
             break
     else:
@@ -92,7 +93,7 @@ def create_features(df):
     }).values
 
     # Kombinieren (sparse + dense)
-    from scipy.sparse import hstack, csr_matrix
+    from scipy.sparse import csr_matrix, hstack
     X_combined = hstack([X_tfidf, csr_matrix(meta)])
 
     return X_combined, vectorizer
@@ -139,7 +140,7 @@ def main():
     print(f"   Feature-Dimension: {X.shape[1]:,}")
 
     # ── Train/Test-Split ─────────────────────────────────────
-    X_train, X_test, y_train, y_test, train_idx, test_idx = train_test_split(
+    X_train, X_test, y_train, y_test, _train_idx, test_idx = train_test_split(
         X, y, np.arange(len(y)), test_size=0.2, random_state=42, stratify=y
     )
     print(f"   Train: {X_train.shape[0]:,} | Test: {X_test.shape[0]:,}")

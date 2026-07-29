@@ -4,15 +4,15 @@ Tests für spam_classifier.py
 import numpy as np
 import pandas as pd
 import pytest
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.linear_model import LogisticRegression
 from scipy.sparse import csr_matrix
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import MultinomialNB
 
 from spam_classifier import (
-    load_spam_data,
     create_features,
     evaluate_model,
+    load_spam_data,
 )
 
 
@@ -70,13 +70,13 @@ class TestCreateFeatures:
 
     def test_returns_sparse_matrix(self, sample_df):
         """Gibt eine sparse Matrix zurück."""
-        X, vec = create_features(sample_df)
+        X, _vec = create_features(sample_df)
         from scipy.sparse import issparse
         assert issparse(X)
 
     def test_returns_vectorizer(self, sample_df):
         """Gibt einen TfidfVectorizer zurück."""
-        X, vec = create_features(sample_df)
+        _X, vec = create_features(sample_df)
         assert isinstance(vec, TfidfVectorizer)
 
     def test_feature_count_matches(self, sample_df):
@@ -87,7 +87,7 @@ class TestCreateFeatures:
 
     def test_row_count_matches_input(self, sample_df):
         """Anzahl Zeilen entspricht der Eingabe."""
-        X, vec = create_features(sample_df)
+        X, _vec = create_features(sample_df)
         assert X.shape[0] == len(sample_df)
 
 
