@@ -22,3 +22,6 @@ venv/
 .DS_Store
 Thumbs.db
 wandb_runs/
+
+# Trainierte Modelle (Binärartefakte, reproduzierbar via email_classifier.py)
+models/
