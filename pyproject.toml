@@ -1,9 +1,10 @@
 [project]
 name = "spam-klassifikation"
 version = "0.1.0"
-description = "Spam-Klassifikation: TF-IDF, Naive Bayes, Logistic Regression"
+description = "Spam-Klassifikation für SMS und E-Mail: TF-IDF, Naive Bayes, Logistic Regression, LinearSVC"
 requires-python = ">=3.10"
 dependencies = [
+    "joblib>=1.3",
     "numpy>=1.24",
     "pandas>=2.0",
     "scikit-learn>=1.3",
