@@ -136,8 +136,8 @@ def main():
     print(f"   Feature-Dimension: {X.shape[1]:,}")
 
     # ── Train/Test-Split ─────────────────────────────────────
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
+    X_train, X_test, y_train, y_test, train_idx, test_idx = train_test_split(
+        X, y, np.arange(len(y)), test_size=0.2, random_state=42, stratify=y
     )
     print(f"   Train: {X_train.shape[0]:,} | Test: {X_test.shape[0]:,}")
 
@@ -165,6 +165,7 @@ def main():
 
     # ── Bestes Modell ────────────────────────────────────────
     best = max(results, key=lambda r: r["f1"])
+    best_model = models[[r["name"] for r in results].index(best["name"])][1]
     print(f"\n🏆 Bestes Modell: {best['name']} (F1={best['f1']:.3f})")
 
     # ── Fehleranalyse ────────────────────────────────────────
@@ -177,20 +178,23 @@ def main():
     fp = errors[y_test[errors] == 0]
     print(f"\n   False Positives (Ham → Spam): {len(fp)}")
     for i in fp[:3]:
-        idx = X_test[i].indices if hasattr(X_test[i], "indices") else []
-        print(f"   • \"{df.iloc[i]['message'][:80]}...\"")
+        orig_idx = test_idx[i]
+        print(f"   • \"{df.iloc[orig_idx]['message'][:80]}...\"")
 
     # Zeige 5 False Negatives (Spam als Ham klassifiziert)
     fn = errors[y_test[errors] == 1]
     print(f"\n   False Negatives (Spam → Ham): {len(fn)}")
     for i in fn[:3]:
-        print(f"   • \"{df.iloc[i]['message'][:80]}...\"")
+        orig_idx = test_idx[i]
+        print(f"   • \"{df.iloc[orig_idx]['message'][:80]}...\"")
 
     # ── Wichtigste Wörter ────────────────────────────────────
-    if hasattr(best, "coef_"):
+    if best["name"] == "Logistic Regression":
         print("\n📝 Top-Spam-Wörter (Logistic Regression):")
-        coef = models[1][1].coef_[0]  # Logistic Regression
-        top_idx = np.argsort(coef)[-10:][::-1]
+        coef = best_model.coef_[0]
+        # Nur TF-IDF-Koeffizienten (erste 5000), nicht die Metafeatures
+        n_tfidf = len(vectorizer.get_feature_names_out())
+        top_idx = np.argsort(coef[:n_tfidf])[-10:][::-1]
         feature_names = vectorizer.get_feature_names_out()
         for idx in top_idx:
             print(f"   • {feature_names[idx]:20s} ({coef[idx]:.3f})")
