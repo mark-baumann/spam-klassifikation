@@ -165,3 +165,81 @@ class TestMainIntegration:
         from spam_classifier import main
         # main() läuft durch (Daten sind bereits gecached)
         main()  # Kein AssertionError/Exception = bestanden
+
+
+# ═══════════════════════════════════════════════════════════════
+# W&B Integration Tests
+# ═══════════════════════════════════════════════════════════════
+
+class TestWandBTracker:
+    """Tests für WandBTracker aus wandb_utils.py."""
+
+    def test_import(self):
+        """WandBTracker ist importierbar."""
+        from wandb_utils import WandBTracker
+        assert WandBTracker is not None
+
+    def test_initialization_offline(self):
+        """WandBTracker initialisiert im Offline-Modus."""
+        from wandb_utils import WandBTracker
+        tracker = WandBTracker(
+            project="test-spam",
+            config={"lr": 0.1},
+            tags=["test"],
+            group="test-group",
+            job_type="test",
+            notes="Test-Run",
+            offline=True,
+        )
+        # Im Offline-Modus sollte der Run aktiv sein (wenn wandb installiert)
+        assert tracker is not None
+        tracker.finish()
+
+    def test_log_model_result(self):
+        """log_model_result() läuft ohne Fehler."""
+        from wandb_utils import WandBTracker
+        tracker = WandBTracker(project="test-spam", offline=True)
+        if tracker.is_active:
+            tracker.log_model_result(
+                "TestModel", accuracy=0.95, f1=0.93,
+                precision=0.94, recall=0.92, train_time=1.5,
+            )
+        tracker.finish()
+
+    def test_log_feature_stats(self):
+        """log_feature_stats() läuft ohne Fehler."""
+        from wandb_utils import WandBTracker
+        tracker = WandBTracker(project="test-spam", offline=True)
+        if tracker.is_active:
+            tracker.log_feature_stats(
+                num_features=5007, num_samples=5574, spam_ratio=0.134,
+            )
+        tracker.finish()
+
+    def test_log_top_features(self):
+        """log_top_features() läuft ohne Fehler."""
+        from wandb_utils import WandBTracker
+        tracker = WandBTracker(project="test-spam", offline=True)
+        if tracker.is_active:
+            tracker.log_top_features(
+                "TestModel",
+                features=["free", "win", "click", "now"],
+                weights=[2.5, 2.1, 1.8, 1.5],
+            )
+        tracker.finish()
+
+    def test_finish_cleans_up(self):
+        """finish() beendet den Run sauber."""
+        from wandb_utils import WandBTracker
+        tracker = WandBTracker(project="test-spam", offline=True)
+        tracker.finish()
+        # Doppeltes finish() sollte safe sein
+        tracker.finish()
+
+    def test_is_active_property(self):
+        """is_active Property funktioniert."""
+        from wandb_utils import WandBTracker
+        tracker = WandBTracker(project="test-spam", offline=True)
+        # is_active sollte ein bool sein
+        assert isinstance(tracker.is_active, bool)
+        tracker.finish()

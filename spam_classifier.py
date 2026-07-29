@@ -30,6 +30,13 @@ from sklearn.metrics import (
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 
+# ── W&B (optional) ──────────────────────────────────────────
+try:
+    from wandb_utils import WandBTracker
+    WANDB_AVAILABLE = True
+except ImportError:
+    WANDB_AVAILABLE = False
+
 # ═══════════════════════════════════════════════════════════════
 # Daten laden
 # ═══════════════════════════════════════════════════════════════
@@ -127,6 +134,19 @@ def main():
     print("  Spam-Klassifikation — Modellvergleich")
     print("=" * 60)
 
+    # ── W&B Tracking ─────────────────────────────────────────
+    tracker = None
+    if WANDB_AVAILABLE:
+        tracker = WandBTracker(
+            project="spam-klassifikation",
+            config={"models": ["NaiveBayes", "LogisticRegression"],
+                    "features": "TF-IDF + Metafeatures"},
+            tags=["spam", "nlp", "classification"],
+            group="modellvergleich",
+            job_type="train",
+            notes="Automatischer Modellvergleich: Naive Bayes vs. Logistic Regression",
+        )
+
     # ── Daten laden ──────────────────────────────────────────
     print("\n📦 Lade SMS Spam Collection...")
     df = load_spam_data()
@@ -145,6 +165,15 @@ def main():
     )
     print(f"   Train: {X_train.shape[0]:,} | Test: {X_test.shape[0]:,}")
 
+    # ── W&B: Feature-Statistiken loggen ──────────────────────
+    if tracker and tracker.is_active:
+        spam_ratio = df['label'].mean()
+        tracker.log_feature_stats(
+            num_features=X.shape[1],
+            num_samples=len(df),
+            spam_ratio=float(spam_ratio),
+        )
+
     # ── Modelle vergleichen ──────────────────────────────────
     print("\n🤖 Trainiere Modelle...")
     models = [
@@ -155,8 +184,22 @@ def main():
     results = []
     for name, model in models:
         print(f"   {name}...")
+        import time
+        t0 = time.time()
         res = evaluate_model(name, model, X_train, X_test, y_train, y_test)
+        train_time = time.time() - t0
         results.append(res)
+
+        # ── W&B: Modell-Ergebnisse loggen ────────────────────
+        if tracker and tracker.is_active:
+            tracker.log_model_result(
+                model_name=name.replace(" ", ""),
+                accuracy=res["accuracy"],
+                f1=res["f1"],
+                precision=res["precision"],
+                recall=res["recall"],
+                train_time=train_time,
+            )
 
     # ── Ergebnisse ────────────────────────────────────────────
     print("\n📊 Ergebnisse:")
@@ -203,6 +246,16 @@ def main():
         feature_names = vectorizer.get_feature_names_out()
         for idx in top_idx:
             print(f"   • {feature_names[idx]:20s} ({coef[idx]:.3f})")
+
+        # ── W&B: Top-Features loggen ──────────────────────────
+        if tracker and tracker.is_active:
+            top_features = [feature_names[i] for i in top_idx]
+            top_weights = [float(coef[i]) for i in top_idx]
+            tracker.log_top_features("LogisticRegression", top_features, top_weights)
+
+    # ── W&B Cleanup ──────────────────────────────────────────
+    if tracker and tracker.is_active:
+        tracker.finish()
 
     print("\n✅ Analyse abgeschlossen!")
 
