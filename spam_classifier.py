@@ -18,6 +18,7 @@ from urllib.request import urlopen
 
 import numpy as np
 import pandas as pd
+from scipy.sparse import csr_matrix, hstack
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
@@ -44,7 +45,7 @@ def load_spam_data():
     if not os.path.exists(extract_path):
         url = "https://archive.ics.uci.edu/static/public/228/sms+spam+collection.zip"
         print("  Lade SMS Spam Collection...")
-        with urlopen(url) as response, open(zip_path, "wb") as f:
+        with urlopen(url, timeout=30) as response, open(zip_path, "wb") as f:
             shutil.copyfileobj(response, f)
         with zipfile.ZipFile(zip_path, "r") as zf:
             zf.extractall(extract_path)
@@ -93,7 +94,6 @@ def create_features(df):
     }).values
 
     # Kombinieren (sparse + dense)
-    from scipy.sparse import csr_matrix, hstack
     X_combined = hstack([X_tfidf, csr_matrix(meta)])
 
     return X_combined, vectorizer
@@ -169,7 +169,8 @@ def main():
 
     # ── Bestes Modell ────────────────────────────────────────
     best = max(results, key=lambda r: r["f1"])
-    best_model = models[[r["name"] for r in results].index(best["name"])][1]
+    model_map = {name: model for name, model in models}
+    best_model = model_map[best["name"]]
     print(f"\n🏆 Bestes Modell: {best['name']} (F1={best['f1']:.3f})")
 
     # ── Fehleranalyse ────────────────────────────────────────
