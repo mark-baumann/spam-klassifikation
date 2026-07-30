@@ -25,7 +25,7 @@ from sklearn.metrics import (
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from spam_classifier import create_features, load_spam_data
 
 st.set_page_config(page_title="Spam-Klassifikation", layout="wide")
