@@ -448,8 +448,8 @@ def train(quick: bool = False, use_char_ngrams: bool = True,
           f"Average Precision: {m_default['avg_precision']:.4f}")
 
     tn, fp, fn, tp = confusion_matrix(y_test, y_pred_tuned).ravel()
-    print(f"\n   Konfusionsmatrix (kalibrierte Schwelle):")
-    print(f"                  vorhergesagt Ham   vorhergesagt Spam")
+    print("\n   Konfusionsmatrix (kalibrierte Schwelle):")
+    print("                  vorhergesagt Ham   vorhergesagt Spam")
     print(f"   echt Ham   {tn:>14,}      {fp:>14,}")
     print(f"   echt Spam  {fn:>14,}      {tp:>14,}")
     print("\n" + "\n".join("   " + line for line in classification_report(
@@ -479,8 +479,8 @@ def train(quick: bool = False, use_char_ngrams: bool = True,
         "metrics_tuned": m_tuned,
         "cv_results": cv_results,
         "n_features": int(n_features),
-        "n_train": int(len(X_train)),
-        "n_test": int(len(X_test)),
+        "n_train": len(X_train),
+        "n_test": len(X_test),
     }
     if save:
         import joblib

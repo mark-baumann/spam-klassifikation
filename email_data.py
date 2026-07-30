@@ -37,6 +37,7 @@ import shutil
 import tarfile
 from email import policy
 from html.parser import HTMLParser
+from typing import ClassVar
 from urllib.request import urlopen
 
 import pandas as pd
@@ -111,7 +112,7 @@ def download_corpus(cache_dir: str | None = None, quiet: bool = False) -> str:
 class _HTMLTextExtractor(HTMLParser):
     """Zieht sichtbaren Text aus HTML; verwirft <script>/<style>."""
 
-    SKIP_TAGS = {"script", "style", "head"}
+    SKIP_TAGS: ClassVar[set[str]] = {"script", "style", "head"}
 
     def __init__(self):
         super().__init__(convert_charrefs=True)
@@ -142,7 +143,7 @@ def html_to_text(html: str) -> str:
         parser.feed(html)
         parser.close()
         text = parser.text
-    except Exception:
+    except Exception:  # noqa: BLE001
         text = re.sub(r"<[^>]+>", " ", html)
     return re.sub(r"\s+", " ", text).strip()
 
@@ -165,7 +166,7 @@ def _decode_header(msg: email.message.Message, name: str) -> str:
             else:
                 out.append(str(value))
         text = " ".join(out)
-    except Exception:
+    except Exception:  # noqa: BLE001
         text = str(raw)
     return re.sub(r"\s+", " ", text).strip()
 
@@ -174,7 +175,7 @@ def _part_text(part: email.message.Message) -> str:
     """Dekodiert den Payload eines MIME-Parts zu Text."""
     try:
         payload = part.get_payload(decode=True)
-    except Exception:
+    except Exception:  # noqa: BLE001
         payload = None
     if payload is None:
         payload = part.get_payload()
@@ -239,7 +240,7 @@ def parse_email(raw: bytes) -> dict:
     num_recipients = len(email.utils.getaddresses([recipients])) if recipients else 0
 
     num_headers = sum(
-        1 for key in msg.keys()
+        1 for key in msg
         if not key.lower().startswith(LEAKY_HEADERS)
     )
 
@@ -282,7 +283,7 @@ def load_email_data(cache_dir: str | None = None,
                     with open(path, "rb") as f:
                         raw = f.read()
                     record = parse_email(raw)
-                except Exception as exc:  # eine kaputte Mail stoppt nicht alles
+                except Exception as exc:  # noqa: BLE001 — eine kaputte Mail stoppt nicht alles
                     if not quiet:
                         print(f"  ⚠️  {filename} übersprungen: {exc}")
                     continue

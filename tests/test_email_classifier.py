@@ -425,8 +425,8 @@ class TestClassify:
         record = [{"subject": "Hallo", "body": "Kurzer Text"}]
         strict = dict(toy_model, threshold=1e9)
         lenient = dict(toy_model, threshold=-1e9)
-        assert classify(record, model=strict)["is_spam"].iloc[0] == False  # noqa: E712
-        assert classify(record, model=lenient)["is_spam"].iloc[0] == True   # noqa: E712
+        assert classify(record, model=strict)["is_spam"].iloc[0] == False
+        assert classify(record, model=lenient)["is_spam"].iloc[0] == True
 
 
 # ═══════════════════════════════════════════════════════════════
