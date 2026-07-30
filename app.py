@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import streamlit as st
+from scipy.sparse import csr_matrix, hstack
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
@@ -285,7 +286,6 @@ with tab3:
                 1 if any(c.isdigit() for c in user_text) and len([c for c in user_text if c.isdigit()]) >= 3 else 0,
             ]])
 
-            from scipy.sparse import csr_matrix, hstack
             X_input = hstack([text_tfidf, csr_matrix(meta)])
 
             # Vorhersage
