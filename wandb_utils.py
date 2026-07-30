@@ -14,7 +14,6 @@ Verwendung:
 import os
 import subprocess
 import time
-from typing import Optional, List
 
 try:
     import wandb
@@ -37,11 +36,11 @@ class WandBTracker:
     def __init__(
         self,
         project: str = "spam-klassifikation",
-        config: Optional[dict] = None,
-        tags: Optional[list] = None,
-        group: Optional[str] = None,
+        config: dict | None = None,
+        tags: list | None = None,
+        group: str | None = None,
         job_type: str = "train",
-        notes: Optional[str] = None,
+        notes: str | None = None,
         offline: bool = False,
     ):
         self.project = project
@@ -68,13 +67,13 @@ class WandBTracker:
                             stderr=subprocess.DEVNULL,
                         ).decode().strip()
                         self.log({"git_commit": git_commit})
-                    except Exception:
+                    except Exception:  # noqa: S110, BLE001
                         pass
                 print(f"📊 W&B initialisiert (mode={mode}, project={project})")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 print(f"⚠️  W&B-Init fehlgeschlagen: {e}")
 
-    def log(self, metrics: dict, step: Optional[int] = None):
+    def log(self, metrics: dict, step: int | None = None):
         """Loggt Metriken zu W&B."""
         if self.run:
             self.run.log(metrics, step=step)
@@ -87,7 +86,7 @@ class WandBTracker:
         precision: float = 0.0,
         recall: float = 0.0,
         train_time: float = 0.0,
-        params: Optional[dict] = None,
+        params: dict | None = None,
     ):
         """Loggt Ergebnisse eines Modells."""
         metrics = {
@@ -111,8 +110,8 @@ class WandBTracker:
             "data/spam_ratio": spam_ratio,
         })
 
-    def log_top_features(self, model_name: str, features: List[str],
-                         weights: List[float]):
+    def log_top_features(self, model_name: str, features: list[str],
+                         weights: list[float]):
         """Loggt die wichtigsten Features eines Modells."""
         if not self.run:
             return

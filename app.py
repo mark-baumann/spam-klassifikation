@@ -4,21 +4,28 @@ Streamlit-App: Spam-Klassifikation
 Text eingeben → Spam/Ham vorhersagen, TF-IDF visualisieren, Modellvergleich.
 """
 
-import streamlit as st
+import os
+import sys
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from sklearn.linear_model import LogisticRegression
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, confusion_matrix
-from sklearn.model_selection import train_test_split
 import seaborn as sns
-import sys
-import os
+import streamlit as st
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
 
 sys.path.insert(0, os.path.dirname(__file__))
-from spam_classifier import load_spam_data, create_features
+from spam_classifier import create_features, load_spam_data
 
 st.set_page_config(page_title="Spam-Klassifikation", layout="wide")
 st.title("📧 Spam-Klassifikation")
@@ -286,9 +293,9 @@ with tab3:
             col_r1, col_r2 = st.columns(2)
             with col_r1:
                 if pred == 1:
-                    st.error(f"### 🔴 SPAM")
+                    st.error("### 🔴 SPAM")
                 else:
-                    st.success(f"### 🟢 HAM (Kein Spam)")
+                    st.success("### 🟢 HAM (Kein Spam)")
                 st.caption(f"Modell: {best_name}")
 
             with col_r2:
