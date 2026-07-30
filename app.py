@@ -249,7 +249,8 @@ with tab3:
                     "FREE entry in a weekly competition to win an iPad. Just text WIN to 80085 now!",
                     "Congratulations! You've been selected for a exclusive VIP offer. Click http://spam.com/win",
                 ]
-                st.session_state.user_text = np.random.choice(spam_examples)
+                rng = np.random.default_rng(seed=42)
+                st.session_state.user_text = rng.choice(spam_examples)
                 st.rerun()
         with col_ex2:
             if st.button("📝 Ham-Beispiel laden"):
@@ -258,7 +259,8 @@ with tab3:
                     "Don't forget to pick up milk on your way home.",
                     "The report is ready for review. Please check your email.",
                 ]
-                st.session_state.user_text = np.random.choice(ham_examples)
+                rng = np.random.default_rng(seed=42)
+                st.session_state.user_text = rng.choice(ham_examples)
                 st.rerun()
 
         if user_text:
