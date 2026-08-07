@@ -238,6 +238,7 @@ with tab3:
 
         user_text = st.text_area(
             "Nachricht eingeben:",
+            value=st.session_state.get('user_text', ''),
             placeholder="z.B. 'Congratulations! You have won a free iPhone. Click here to claim your prize!'",
             height=100,
         )
@@ -250,8 +251,7 @@ with tab3:
                     "FREE entry in a weekly competition to win an iPad. Just text WIN to 80085 now!",
                     "Congratulations! You've been selected for a exclusive VIP offer. Click http://spam.com/win",
                 ]
-                rng = np.random.default_rng(42)
-                st.session_state.user_text = rng.choice(spam_examples)
+                st.session_state.user_text = np.random.default_rng().choice(spam_examples)
                 st.rerun()
         with col_ex2:
             if st.button("📝 Ham-Beispiel laden"):
@@ -260,8 +260,7 @@ with tab3:
                     "Don't forget to pick up milk on your way home.",
                     "The report is ready for review. Please check your email.",
                 ]
-                rng = np.random.default_rng(42)
-                st.session_state.user_text = rng.choice(ham_examples)
+                st.session_state.user_text = np.random.default_rng().choice(ham_examples)
                 st.rerun()
 
         if user_text:
