@@ -1,13 +1,10 @@
-# ═══════════════════════════════════════════════════════════════
-# Dockerfile — Standard-Template für alle Streamlit-Apps
-# ═══════════════════════════════════════════════════════════════
-# Kopiere diese Datei in jedes App-Repo und passe PORT an.
+# Dockerfile — reines ML-Projekt für E-Mail-Spam-Klassifikation
 
 FROM python:3.12-slim
 
 WORKDIR /app
 
-# System-Abhängigkeiten
+# System-Abhängigkeiten für Downloads und Python-Pakete
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
@@ -16,16 +13,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# App-Code
+# Projektcode
 COPY . .
 
-# Port (pro App anpassen: 8501-8519)
-ARG PORT=8510
-EXPOSE $PORT
-
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-  CMD python -c "import urllib.request;urllib.request.urlopen('http://localhost:${PORT}/_stcore/health')"
-
-# Streamlit
-CMD streamlit run app/app.py --server.port=$PORT --server.address=0.0.0.0 --server.headless=true
+# Standard: E-Mail-Daten ingestieren, Features bauen und ein schnelles Modell trainieren.
+# Für vollständige Cross-Validation: docker run <image> python email_classifier.py
+CMD ["python", "email_classifier.py", "--quick"]
