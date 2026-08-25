@@ -2,10 +2,9 @@
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3%2B-f7931e.svg)](https://scikit-learn.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B.svg)](https://streamlit.io/)
 [![Status](https://img.shields.io/badge/Status-Aktiv-brightgreen.svg)]()
 
-Automatische **Spam-Erkennung** für SMS und E-Mails mit TF-IDF-Vektorisierung und mehreren Klassifikationsmodellen. Vergleiche Naive Bayes, Logistic Regression und LinearSVC — trainiere Modelle, analysiere Top-Features und teste eigene Nachrichten live in der Streamlit-App.
+Automatische **Spam-Erkennung** für SMS und E-Mails mit TF-IDF-Vektorisierung und mehreren Klassifikationsmodellen. Vergleiche Naive Bayes, Logistic Regression und LinearSVC — trainiere Modelle und teste sie programmatisch.
 
 ## ✨ Features
 
@@ -13,7 +12,6 @@ Automatische **Spam-Erkennung** für SMS und E-Mails mit TF-IDF-Vektorisierung u
 - **🔤 TF-IDF-Vektorisierung** — Text in numerische Feature-Vektoren umwandeln, Top-Wörter visualisieren
 - **🤖 Modellvergleich** — MultinomialNB, Logistic Regression und LinearSVC mit Metriken vergleichen
 - **📈 Metriken** — Accuracy, Precision, Recall, F1-Score und Confusion Matrix
-- **🧪 Live-Test** — Eigene Nachricht eingeben und sofort klassifizieren lassen
 - **📊 W&B-Integration** — Experiment-Tracking mit Weights & Biases
 - **✅ Vollständig getestet** — Unit-Tests für Klassifikatoren und Feature-Engineering
 
@@ -36,11 +34,12 @@ uv pip install -e ".[dev]"
 ## 🎯 Nutzung
 
 ```bash
-# Streamlit-App starten
-streamlit run app.py
-```
+# Spam-Klassifikation trainieren und evaluieren
+python spam_classifier.py
 
-Die App öffnet sich im Browser unter `http://localhost:8501`. Erkunde die Tabs: Daten-Exploration, Modellvergleich und Live-Test.
+# Tests ausführen
+pytest tests/ -v
+```
 
 ## 🧪 Tests ausführen
 
@@ -58,7 +57,6 @@ pytest tests/ -v
 | **SciPy** | Sparse-Matrix-Operationen |
 | **Matplotlib** | Visualisierung von Metriken und Features |
 | **Seaborn** | Confusion-Matrix-Heatmaps |
-| **Streamlit** | Interaktive Web-App |
 | **Weights & Biases** | Experiment-Tracking |
 | **Pytest** | Test-Framework |
 
@@ -66,12 +64,11 @@ pytest tests/ -v
 
 ```
 spam-klassifikation/
-├── app.py                      # Streamlit-Hauptapp
-├── pyproject.toml              # Projekt-Konfiguration
 ├── spam_classifier.py          # TF-IDF, Training, Evaluation
 ├── email_classifier.py         # E-Mail-spezifische Klassifikation
 ├── email_data.py               # E-Mail-Datengenerierung
 ├── wandb_utils.py              # W&B-Integration
+├── pyproject.toml              # Projekt-Konfiguration
 └── tests/
     ├── test_spam_classifier.py
     └── test_email_classifier.py
