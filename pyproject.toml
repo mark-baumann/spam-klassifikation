@@ -1,7 +1,7 @@
 [project]
 name = "spam-klassifikation"
 version = "0.1.0"
-description = "Spam-Klassifikation für SMS und E-Mail: TF-IDF, Naive Bayes, Logistic Regression, LinearSVC"
+description = "Spam-Klassifikation für SMS: TF-IDF, Naive Bayes, Logistic Regression, Embeddings"
 requires-python = ">=3.10"
 dependencies = [
     "joblib>=1.3",
