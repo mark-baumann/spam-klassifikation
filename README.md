@@ -37,6 +37,9 @@ uv pip install -e ".[dev]"
 # Spam-Klassifikation trainieren und evaluieren
 python spam_classifier.py
 
+# Interaktive UI starten
+streamlit run app.py
+
 # Tests ausführen
 pytest tests/ -v
 ```
@@ -64,6 +67,7 @@ pytest tests/ -v
 
 ```
 spam-klassifikation/
+├── app.py                      # Streamlit-UI (Modellvergleich & Live-Vorhersage)
 ├── spam_classifier.py          # TF-IDF, Training, Evaluation
 ├── email_classifier.py         # E-Mail-spezifische Klassifikation
 ├── email_data.py               # E-Mail-Datengenerierung
